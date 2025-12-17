@@ -1,44 +1,57 @@
 
 # Hybrid Cloud & Automation Portfolio: Flask, Linux, & APIs
-**Author:** Saleem Ali  
-**Architecture:** Hybrid Client-Server (Windows Client -> Remote Linux Database)  
+
+**Author:** Saleem Ali
+**Architecture:** Hybrid Client-Server (Windows Client -> Remote Linux Database)
 **Domain:** Full Stack Development, DevOps, & Systems Architecture
+
 ---
+
 ## ==>> Project Overview
-This repository demonstrates a production-grade **Hybrid Architecture** where the Application Layer is decoupled from the Data Layer. Unlike standard single-machine projects, this system mimics a real-world enterprise environment involving cross-platform communication.
+
+This repository demonstrates a production-grade **Hybrid Architecture** where the Application Layer is decoupled from the Data Layer. Unlike standard single-machine "localhost" projects, this system mimics a real-world enterprise environment involving cross-platform communication.
+
 * **The Application (Windows):** A Python Flask web server that handles the User Interface, business logic, and external API integrations (Jira).
 * **The Database (Linux):** A virtualized MariaDB server running on a Linux instance, configured to accept secure remote connections over TCP/IP.
+
 This portfolio proves the ability to bridge the gap between **Software Engineering** (Python/Web) and **IT Infrastructure** (Linux/Networking).
+
 ---
+
 ## ==>> System Architecture
+
 The system relies on a TCP/IP bridge between the local host (Windows) and the virtualized server (Linux).
+
 ```mermaid
-flowchart LR
-    subgraph Host_A_Windows [Windows PC (Client)]
-        Flask[Python Flask App]
-        Browser[Web Dashboard]
-        Scripts[Automation Scripts]
+graph LR
+    subgraph Windows ["Windows PC (Client)"]
+        Flask["Python Flask App"]
+        Browser["Web Dashboard"]
+        Scripts["Automation Scripts"]
         Browser --> Flask
     end
-    subgraph Host_B_Linux [Linux VM (Server)]
-        DB[(MariaDB Database)]
-        Firewall[UFW Firewall]
+
+    subgraph Linux ["Linux VM (Server)"]
+        DB[("MariaDB Database")]
+        Firewall["UFW Firewall"]
     end
-    subgraph External_Cloud [External APIs]
-        Jira[Jira Cloud]
-        IPServices[IPify API]
+
+    subgraph Cloud ["External APIs"]
+        Jira["Jira Cloud"]
+        IPServices["IPify API"]
     end
+
     %% Connections
     Flask -- "SQL Query (Port 3306)" --> Firewall
     Firewall --> DB
     Scripts -- "REST API (HTTPS)" --> Jira
     Scripts -- "GET Request" --> IPServices
+
     %% Styling
-    style Host_A_Windows fill:#f9f9f9,stroke:#333,stroke-width:2px
-    style Host_B_Linux fill:#e1f5fe,stroke:#333,stroke-width:2px
-    style External_Cloud fill:#fff3e0,stroke:#333,stroke-width:2px
+    style Windows fill:#f9f9f9,stroke:#333,stroke-width:2px
+    style Linux fill:#e1f5fe,stroke:#333,stroke-width:2px
     style Flask fill:#2980b9,color:white
-    style DB fill:#c0392b,color💮
+    style DB fill:#c0392b,color:white
 
 ```
 
