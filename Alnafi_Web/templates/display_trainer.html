@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<center>
+<table id="TestTable" border="2">
+
+    <tr>
+        <th colspan="7">Trainer Course Details</th>
+    </tr>
+    <tr>
+        <th> Sr.no </th>
+        <th> First Name </th>
+        <th> Last Name </th>
+        <th> Designation </th>
+        <th> Username </th>
+        <th> Password </th>
+    </tr>
+
+    {% for trainer in trainers %}
+    <tr>
+        <td>{{ trainer[0] }}</td>
+        <td>{{ trainer[1] }}</td>
+        <td>{{ trainer[2] }}</td>
+        <td>{{ trainer[3] }}</td>
+        <td>{{ trainer[4] }}</td>
+        <td>{{ trainer[5] }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+    </center>
+
+</body>
+</html>

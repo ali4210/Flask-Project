@@ -1,0 +1,41 @@
+<html>
+<head>
+    <h1> Trainer Details </h1>
+
+</head>
+<body>
+<table>
+<form method = "post" action = "{{ url_for('trainer_create') }}" name = "trainer_form" >
+
+    <tr>
+        <td>First Name</td>
+        <td> <input type="text" name="fname"></td>
+    </tr>
+
+    <tr>
+            <td>Last Name</td>
+            <td> <input type="text" name="lname"></td>
+    </tr>
+    <tr>
+        <td>Designation</td>
+        <td> <input type="text" name="desig"></td>
+    </tr>
+    <tr>
+        <td>Username</td>
+        <td> <input type="text" name="username"></td>
+    </tr>
+    <tr>
+        <td>Password</td>
+        <td> <input type="password" name="password"></td>
+    </tr>
+    <tr>
+        <td> <input type="submit" value="Submit"> </td>
+    </tr>
+
+
+
+</form>
+</table>
+
+</body>
+</html>

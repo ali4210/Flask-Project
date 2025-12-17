@@ -1,0 +1,37 @@
+# ==>> Python Build & Compile Files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==>> Virtual Environments (CRITICAL)
+# This prevents uploading the thousands of library files in your 'myproject' folder
+venv/
+env/
+.venv/
+Flask_Project/myproject/
+Include/
+Lib/
+Scripts/
+pyvenv.cfg
+
+# ==>> Environment Variables & Secrets
+# Protects your DB passwords and API tokens if you move them to a .env file later
+.env
+.env.local
+config.py
+secrets.json
+
+# ==>> IDE & Editor Settings
+# Ignore PyCharm and VS Code settings
+.idea/
+.vscode/
+*.swp
+
+# ==>> Distribution / Packaging
+dist/
+build/
+*.egg-info/
+
+# ==>> Logs and Databases
+*.log
+*.sqlite
