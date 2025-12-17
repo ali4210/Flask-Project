@@ -1,14 +1,4 @@
-I have designed a professional, high-impact `README.md` for your GitHub repository.
 
-This file is crafted to immediately tell a recruiter or technical lead that you understand **Systems Architecture**, not just coding. It highlights the "Hybrid" nature of your project (Windows + Linux), which is a major selling point.
-
----
-
-### 📄 README.md
-
-*Create a file named `README.md` in the root of your repository and paste this content:*
-
-```markdown
 # Hybrid Cloud & Automation Portfolio: Flask, Linux, & APIs
 
 **Author:** Saleem Ali
