@@ -1,253 +1,666 @@
+# Flask Web Application with MariaDB
 
-# Hybrid Cloud & Automation Portfolio: Flask, Linux, & APIs
+[![Python Version](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/)
+[![Flask Version](https://img.shields.io/badge/flask-3.1.2-green.svg)](https://flask.palletsprojects.com/)
+[![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/status-active-success.svg)]()
 
-**Author:** Saleem Ali
-**Architecture:** Hybrid Client-Server (Windows Client -> Remote Linux Database)
-**Domain:** Full Stack Development, DevOps, & Systems Architecture
+> A full-stack web application built with Flask and MariaDB, featuring remote database connectivity, REST API integration, and trainer management system.
 
----
-
-## ==>> Project Overview
-
-This repository demonstrates a production-grade **Hybrid Architecture** where the Application Layer is decoupled from the Data Layer. Unlike standard single-machine "localhost" projects, this system mimics a real-world enterprise environment involving cross-platform communication.
-
-* **The Application (Windows):** A Python Flask web server that handles the User Interface, business logic, and external API integrations (Jira).
-* **The Database (Linux):** A virtualized MariaDB server running on a Linux instance, configured to accept secure remote connections over TCP/IP.
-
-This portfolio proves the ability to bridge the gap between **Software Engineering** (Python/Web) and **IT Infrastructure** (Linux/Networking).
+![Architecture](https://via.placeholder.com/800x200/4A90E2/FFFFFF?text=Flask+%2B+MariaDB+Architecture)
 
 ---
 
-## ==>> System Architecture
+## 📋 Table of Contents
 
-The system relies on a TCP/IP bridge between the local host (Windows) and the virtualized server (Linux).
+- [Features](#features)
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [API Documentation](#api-documentation)
+- [Project Structure](#project-structure)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
-```mermaid
-graph LR
-    subgraph Windows ["Windows PC (Client)"]
-        Flask["Python Flask App"]
-        Browser["Web Dashboard"]
-        Scripts["Automation Scripts"]
-        Browser --> Flask
-    end
+---
 
-    subgraph Linux ["Linux VM (Server)"]
-        DB[("MariaDB Database")]
-        Firewall["UFW Firewall"]
-    end
+## ✨ Features
 
-    subgraph Cloud ["External APIs"]
-        Jira["Jira Cloud"]
-        IPServices["IPify API"]
-    end
+### Core Functionality
+- 🎯 **Trainer Management System** - Complete CRUD operations for trainer records
+- 🗄️ **Remote Database Access** - MariaDB on Linux, Flask on Windows
+- 🌐 **REST API Integration** - Jira API and IP geolocation services
+- 📱 **Responsive Templates** - HTML/CSS with Jinja2 templating
+- 🔒 **Secure Connections** - Parameterized queries to prevent SQL injection
+- 📊 **Data Visualization** - Dynamic table rendering with database records
 
-    %% Connections
-    Flask -- "SQL Query (Port 3306)" --> Firewall
-    Firewall --> DB
-    Scripts -- "REST API (HTTPS)" --> Jira
-    Scripts -- "GET Request" --> IPServices
+### Technical Highlights
+- **Cross-Platform Architecture**: Windows client connecting to Linux database server
+- **Network Communication**: TCP/IP over LAN with MySQL protocol
+- **Virtual Environment**: Isolated Python dependencies
+- **Error Handling**: Comprehensive exception management
+- **Modular Design**: Separation of concerns (routes, templates, database)
 
-    %% Styling
-    style Windows fill:#f9f9f9,stroke:#333,stroke-width:2px
-    style Linux fill:#e1f5fe,stroke:#333,stroke-width:2px
-    style Flask fill:#2980b9,color:white
-    style DB fill:#c0392b,color:white
+---
+
+## 🏗️ Architecture
 
 ```
+┌─────────────────────────────────────────────────────────┐
+│                   System Architecture                    │
+└─────────────────────────────────────────────────────────┘
 
-**Data Flow:**
+Windows PC (Client)              Linux Server (Database)
+─────────────────────            ───────────────────────
+│                                │
+│  Flask Application             │  MariaDB Server
+│  ├── Routes                    │  ├── alnafi database
+│  ├── Templates                 │  ├── trainer_details table
+│  ├── Static Files              │  └── Port 3306
+│  └── Port 5000                 │
+│                                │
+└────────── LAN (192.168.0.x) ───┘
+            │
+            ├── HTTP Requests
+            ├── SQL Queries
+            └── API Calls (External)
+```
 
-1. **User** interacts with the Web Dashboard on the Windows Client.
-2. **Flask** processes the request (e.g., "Register New Trainer").
-3. **Application** opens a socket connection to the Linux VM (Target IP) on Port 3306.
-4. **MariaDB** executes the SQL Transaction and returns the result over the network.
-5. **Jinja2** renders the live data back to the user.
+### Technology Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | HTML5, CSS3, Jinja2 |
+| **Backend** | Flask 3.1.2, Python 3.13 |
+| **Database** | MariaDB 10.x |
+| **API Integration** | Requests library, Jira API |
+| **Server** | Werkzeug development server |
 
 ---
 
-## ==>> Tech Stack
+## 🔧 Prerequisites
 
-| Category | Technologies Used |
-| --- | --- |
-| **Backend** | Python 3.x, Flask, Jinja2 |
-| **Database** | MariaDB (MySQL), SQL |
-| **Infrastructure** | Windows 10/11 (Client), Linux (Server), Virtualization |
-| **Networking** | TCP/IP, Port Forwarding, Firewall Config (UFW) |
-| **Automation** | REST APIs, Jira Integration, Request Library |
+### Software Requirements
 
----
-
-## ==>> Installation & Configuration
-
-Since this is a hybrid project, setup is divided into two parts.
-
-### => Part 1: Linux Server Configuration (The Backend)
-
-*Perform these steps on your Linux Virtual Machine.*
-
-1. **Install MariaDB:**
+**Windows Development Machine:**
 ```bash
-sudo apt update && sudo apt install mariadb-server
-sudo systemctl enable mariadb
-
+- Python 3.13+
+- pip (Python package manager)
+- Git (optional)
+- Web browser (Chrome, Firefox, etc.)
 ```
 
+**Linux Database Server:**
+```bash
+- MariaDB Server 10.x
+- SSH access
+- Firewall access to port 3306
+```
 
-2. **Configure Remote Access (Bind Address):**
-* By default, MariaDB blocks remote connections.
-* Edit config: `sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf`
-* Change: `bind-address = 127.0.0.1` to `bind-address = 0.0.0.0`
-* Restart: `sudo systemctl restart mariadb`
+### Network Requirements
+- Both machines on same LAN or accessible via IP
+- Port 3306 open on Linux server
+- Stable network connection
 
+---
 
-3. **Configure Firewall:**
-* Allow traffic on the database port.
+## 📥 Installation
 
+### Step 1: Clone Repository
 
 ```bash
-sudo ufw allow 3306/tcp
-sudo ufw reload
-
+git clone https://github.com/yourusername/flask-mariadb-app.git
+cd flask-mariadb-app
 ```
 
+### Step 2: Create Virtual Environment
 
-4. **Create Database & Grant Remote Privileges:**
-* Log in to SQL: `sudo mysql -u root -p`
-
-
-```sql
-CREATE DATABASE alnafi;
-USE alnafi;
-
--- Create Table
-CREATE TABLE trainer_details (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    fname VARCHAR(100),
-    lname VARCHAR(100),
-    desig VARCHAR(100),
-    username VARCHAR(50),
-    password VARCHAR(50)
-);
-
--- Grant access to root from ANY IP (%)
-GRANT ALL PRIVILEGES ON alnafi.* TO 'root'@'%' IDENTIFIED BY '8601';
-FLUSH PRIVILEGES;
-EXIT;
-
+**Windows:**
+```powershell
+python -m venv myproject
+.\myproject\Scripts\activate
 ```
 
-
-
-### => Part 2: Windows Client Configuration (The App)
-
-*Perform these steps on your local Windows machine.*
-
-1. **Clone the Repository:**
+**Linux/Mac:**
 ```bash
-git clone [https://github.com/YourUsername/flask-hybrid-automation.git](https://github.com/YourUsername/flask-hybrid-automation.git)
-cd flask-hybrid-automation
-
+python3 -m venv myproject
+source myproject/bin/activate
 ```
 
+### Step 3: Install Dependencies
 
-2. **Install Python Dependencies:**
 ```bash
 pip install -r requirements.txt
-
 ```
 
+**Expected output:**
+```
+Successfully installed Flask-3.1.2 flask-mysqldb-2.0.0 ...
+```
 
-3. **Configure Network Connection:**
-* Find your Linux VM's IP address (Run `ip addr` on Linux).
-* Open `Alnafi_Web/app.py`.
-* Update the configuration:
+### Step 4: Setup Database
 
+**On Linux Server:**
+```bash
+# Install MariaDB
+sudo apt update
+sudo apt install mariadb-server -y
+
+# Secure installation
+sudo mysql_secure_installation
+
+# Create database and user
+sudo mysql -u root -p
+```
+
+**SQL Commands:**
+```sql
+CREATE DATABASE alnafi;
+CREATE USER 'root'@'192.168.0.%' IDENTIFIED BY 'your_password';
+GRANT ALL PRIVILEGES ON alnafi.* TO 'root'@'192.168.0.%';
+FLUSH PRIVILEGES;
+
+USE alnafi;
+CREATE TABLE trainer_details (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fname VARCHAR(100) NOT NULL,
+    lname VARCHAR(100) NOT NULL,
+    desig VARCHAR(100) NOT NULL,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+**Configure Remote Access:**
+```bash
+sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
+# Change: bind-address = 0.0.0.0
+
+sudo ufw allow 3306/tcp
+sudo systemctl restart mariadb
+```
+
+---
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create `.env` file in project root:
+
+```bash
+# Database Configuration
+DB_HOST=192.168.0.150
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=alnafi
+
+# Flask Configuration
+FLASK_SECRET_KEY=your-secret-key-here
+FLASK_ENV=development
+FLASK_DEBUG=True
+
+# Jira API (Optional)
+JIRA_URL=https://your-domain.atlassian.net
+JIRA_USER=your-email@company.com
+JIRA_API_TOKEN=your-api-token
+```
+
+### Application Configuration
+
+Edit `Alnafi_Web/app.py`:
 
 ```python
-app.config['MYSQL_HOST'] = '192.168.0.150' # Replace with your Linux IP
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '8601'
-
+# Update these values
+app.config['MYSQL_HOST'] = 'YOUR_LINUX_SERVER_IP'
+app.config['MYSQL_USER'] = 'YOUR_DB_USER'
+app.config['MYSQL_PASSWORD'] = 'YOUR_DB_PASSWORD'
+app.config['MYSQL_DB'] = 'alnafi'
 ```
 
+---
 
-4. **Run the Application:**
+## 🚀 Usage
+
+### Starting the Application
+
 ```bash
-python Alnafi_Web/app.py
+# Navigate to application directory
+cd Alnafi_Web
 
+# Run Flask application
+python app.py
 ```
 
+**Expected output:**
+```
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://0.0.0.0:5000
+Press CTRL+C to quit
+```
 
-* Access the dashboard at `http://localhost:5000`.
+### Accessing the Application
 
+**From Same Computer:**
+```
+http://localhost:5000/
+http://127.0.0.1:5000/
+```
 
+**From Other Computers on Network:**
+```
+http://YOUR_PC_IP:5000/
+```
 
----
+### Available Routes
 
-## ==>> Key Features
+| URL | Method | Description |
+|-----|--------|-------------|
+| `/` | GET | Home page |
+| `/contacts` | GET | Contact information |
+| `/trainer` | GET | Trainer registration form |
+| `/trainer_create` | POST | Create new trainer |
+| `/trainer_data` | GET | View all trainers |
 
-### 1. Trainer Management Portal
+### Using the Application
 
-A full CRUD (Create, Read, Update, Delete) interface for managing Trainer profiles.
+**1. Register New Trainer:**
+- Open: `http://localhost:5000/trainer`
+- Fill form with trainer details
+- Click "Submit"
+- Data saved to MariaDB database
 
-* **Architecture:** MVC Pattern (Model-View-Controller).
-* **Frontend:** Dynamic HTML tables generated via Jinja2 loops.
-* **Backend:** Secure SQL transactions over a network socket.
+**2. View All Trainers:**
+- Open: `http://localhost:5000/trainer_data`
+- See table with all registered trainers
+- Data fetched from MariaDB in real-time
 
-### 2. Automated Jira Ticketing
+**3. Test API Scripts:**
+```bash
+# Test IP lookup
+python API_test.py
 
-Includes a standalone Python automation suite for Atlassian Jira.
+# Test Jira integration (configure credentials first)
+python API_test_2.py
 
-* **Function:** Automatically generates "Task" or "Bug" tickets via the Jira REST API.
-* **Security:** Uses API Token authentication (Basic Auth).
-* **Usage:** Update `API_test_2.py` with your Jira credentials and run.
-
-### 3. Network Diagnostics
-
-Includes `API_test.py` to verify external connectivity and fetch Public IP / Geo-location data programmatically.
-
----
-
-## ==>> Project Structure
-
-```text
-├── Alnafi_Web/
-│   ├── app.py                 # Main Flask Application Entry Point
-│   └── templates/             # HTML/Jinja2 User Interface
-│       ├── index.html         # Main Dashboard
-│       ├── trainer_details.html # Data Entry Form
-│       └── display_trainer.html # Data View
-├── Scripts/
-│   ├── API_test_2.py          # Jira Automation Script
-│   └── API_test.py            # IP & Connectivity Checker
-├── requirements.txt           # Project Dependencies
-└── README.md                  # Documentation
-
+# Test HTTP headers
+python API_test_with_Header.py
 ```
 
 ---
 
-## ==>> Troubleshooting
+## 📡 API Documentation
 
-**Issue: "Can't connect to MySQL server on '192.168.x.x' (10060)"**
+### Internal Routes
 
-* **Solution 1:** Ensure your VM Network Adapter is set to **"Bridged Adapter"** so it has a reachable IP.
-* **Solution 2:** Verify you edited the `bind-address` in the Linux MariaDB config to `0.0.0.0`.
-* **Solution 3:** Check if the Linux Firewall is blocking port 3306 (`sudo ufw status`).
+#### Create Trainer
+```http
+POST /trainer_create
+Content-Type: application/x-www-form-urlencoded
 
-**Issue: "Access denied for user 'root'@'192.168.x.x'"**
+fname=John&lname=Doe&desig=Developer&username=johndoe&password=pass123
+```
 
-* **Solution:** You missed the SQL Grant step. Run `GRANT ALL ... TO 'root'@'%'` on the Linux DB.
+**Response:**
+```
+200 OK - Trainer created successfully
+```
+
+#### Get All Trainers
+```http
+GET /trainer_data
+```
+
+**Response:**
+```html
+200 OK - HTML table with trainer records
+```
+
+### External API Integration
+
+#### IP Geolocation (ipify.org)
+```python
+import requests
+
+response = requests.get("https://api.ipify.org?format=json")
+data = response.json()
+print(data['ip'])  # Your public IP
+```
+
+#### Jira Issue Creation
+```python
+import requests
+import json
+
+url = "https://your-domain.atlassian.net/rest/api/3/issue"
+headers = {"Content-Type": "application/json"}
+payload = {
+    "fields": {
+        "project": {"key": "PROJECT_KEY"},
+        "summary": "Issue Title",
+        "description": "Issue Description",
+        "issuetype": {"name": "Task"}
+    }
+}
+
+response = requests.post(url, auth=(email, api_token), 
+                        headers=headers, data=json.dumps(payload))
+```
 
 ---
 
-## ==>> Contact
+## 📁 Project Structure
+
+```
+Flask/
+├── 📄 README.md                    # This file
+├── 📄 requirements.txt             # Python dependencies
+├── 📄 .gitignore                   # Git ignore rules
+├── 📄 .env                         # Environment variables (not in git)
+│
+├── 📁 Alnafi_Web/                  # Main web application
+│   ├── 📄 app.py                   # Flask routes & database logic
+│   ├── 📄 config.py                # Configuration settings
+│   │
+│   ├── 📁 templates/               # HTML templates
+│   │   ├── 📄 index.html           # Home page
+│   │   ├── 📄 demo.html            # Demo template
+│   │   ├── 📄 trainer_details.html # Registration form
+│   │   ├── 📄 display_trainer.html # Trainer list view
+│   │   └── 📄 style.css            # Styles
+│   │
+│   └── 📁 static/                  # Static assets
+│       ├── 📁 css/                 # Stylesheets
+│       ├── 📁 js/                  # JavaScript files
+│       └── 📁 images/              # Images
+│           ├── 📄 alnafi.jpg
+│           └── 📄 abd4.png
+│
+├── 📁 Flask_Project/               # Simple Flask example
+│   └── 📁 myproject/               # Virtual environment
+│       └── 📄 app.py               # Basic Flask app
+│
+├── 📁 myproject/                   # Virtual environment (not in git)
+│   ├── 📁 Scripts/                 # Windows executables
+│   ├── 📁 Lib/                     # Python packages
+│   └── 📄 pyvenv.cfg               # Venv configuration
+│
+├── 📄 API_test.py                  # IP lookup test
+├── 📄 API_test_2.py                # Jira issue creation
+├── 📄 API_test_with_Header.py      # HTTP headers demo
+├── 📄 API_testing.py               # IP geolocation test
+├── 📄 Jira_API_accountID_to_email.py  # Jira user lookup
+│
+└── 📁 logs/                        # Application logs (not in git)
+    └── 📄 flask_app.log            # Error and info logs
+```
+
+---
+
+## 🧪 Testing
+
+### Manual Testing
+
+**Test Database Connection:**
+```bash
+python test_connection.py
+```
+
+**Expected output:**
+```
+✅ Successfully connected to MariaDB!
+Tables in database: [('trainer_details',)]
+```
+
+### Automated Testing
+
+**Run all tests:**
+```bash
+python test_application.py
+```
+
+**Run specific test:**
+```bash
+python test_application.py FlaskAppTests.test_home_route
+```
+
+**Test coverage:**
+```bash
+pip install coverage
+coverage run test_application.py
+coverage report
+```
+
+### Test Checklist
+
+- [ ] Database connection successful
+- [ ] Home route returns 200 OK
+- [ ] Trainer form loads correctly
+- [ ] Form submission creates database record
+- [ ] Trainer list displays all records
+- [ ] API tests run without errors
+
+---
+
+## 🚢 Deployment
+
+### Development Server (Current Setup)
+
+```bash
+python app.py
+# Runs on http://0.0.0.0:5000
+```
+
+### Production Deployment
+
+**Using Gunicorn (Linux):**
+```bash
+pip install gunicorn
+gunicorn --workers=4 --bind=0.0.0.0:5000 app:app
+```
+
+**Using systemd (Auto-start):**
+```ini
+# /etc/systemd/system/flask-app.service
+[Unit]
+Description=Flask Application
+After=network.target
+
+[Service]
+User=youruser
+WorkingDirectory=/path/to/Flask/Alnafi_Web
+Environment="PATH=/path/to/Flask/myproject/bin"
+ExecStart=/path/to/Flask/myproject/bin/gunicorn --workers=4 --bind=0.0.0.0:5000 app:app
+
+[Install]
+WantedBy=multi-user.target
+```
+
+**Enable service:**
+```bash
+sudo systemctl enable flask-app
+sudo systemctl start flask-app
+```
+
+### Nginx Reverse Proxy
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /static {
+        alias /path/to/Flask/Alnafi_Web/static;
+    }
+}
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these guidelines:
+
+### How to Contribute
+
+1. **Fork the repository**
+2. **Create feature branch:** `git checkout -b feature/AmazingFeature`
+3. **Commit changes:** `git commit -m 'Add AmazingFeature'`
+4. **Push to branch:** `git push origin feature/AmazingFeature`
+5. **Open Pull Request**
+
+### Code Style
+
+- Follow PEP 8 guidelines
+- Add docstrings to functions
+- Write meaningful commit messages
+- Add tests for new features
+
+### Reporting Bugs
+
+Use GitHub Issues with:
+- Clear description
+- Steps to reproduce
+- Expected vs actual behavior
+- System information (OS, Python version)
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+```
+MIT License
+
+Copyright (c) 2024 Saleem Ali
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files...
+```
+
+---
+
+## 👤 Contact
 
 **Saleem Ali**
+- **LinkedIn:** [linkedin.com/in/saleem-ali-189719325](https://www.linkedin.com/in/saleem-ali-189719325/)
+- **GitHub:** [github.com/ali4210](https://github.com/ali4210)
+- **Institution:** Al-Nafi International College (AIOps Program)
 
-* **Role:** Full Stack Engineer & Automation Specialist
-* **Focus:** Bridging the gap between Development and Infrastructure.
+**Project Links:**
+- **GitHub Repository:** [github.com/ali4210/flask-mariadb-app](https://github.com/ali4210/flask-mariadb-app)
+- **Documentation:** [Master Guide](docs/MASTER_GUIDE.md)
+- **Issues:** [GitHub Issues](https://github.com/ali4210/flask-mariadb-app/issues)
 
+---
+
+## 🙏 Acknowledgments
+
+- **Flask Documentation** - Excellent framework documentation
+- **MariaDB Community** - Database support and resources
+- **Stack Overflow** - Problem-solving assistance
+- **Al-Nafi International College** - Educational support
+- **Open Source Community** - Inspiration and learning
+
+---
+
+## 📊 Project Status
+
+- ✅ **Completed:** Core functionality, database integration, API testing
+- 🔄 **In Progress:** User authentication, advanced features
+- 📋 **Planned:** Mobile app, advanced analytics, Docker deployment
+
+---
+
+## 🎯 Roadmap
+
+### Version 1.1.0 (Planned)
+- [ ] User authentication system
+- [ ] Password hashing
+- [ ] Session management
+- [ ] Input validation
+
+### Version 1.2.0 (Planned)
+- [ ] Admin dashboard
+- [ ] File upload functionality
+- [ ] Email notifications
+- [ ] Advanced search
+
+### Version 2.0.0 (Future)
+- [ ] RESTful API endpoints
+- [ ] JWT authentication
+- [ ] Real-time updates (WebSockets)
+- [ ] Docker containerization
+
+---
+
+## 💡 Tips & Tricks
+
+### Quick Commands
+
+```bash
+# Restart Flask app quickly
+Ctrl+C    # Stop server
+python app.py    # Restart
+
+# Check database connection
+python -c "import mysql.connector; conn = mysql.connector.connect(host='192.168.0.150', user='root', password='8601', database='alnafi'); print('✅ Connected' if conn.is_connected() else '❌ Failed')"
+
+# View logs in real-time
+tail -f logs/flask_app.log
+
+# Quick database backup
+mysqldump -u root -p alnafi > backup_$(date +%Y%m%d).sql
 ```
 
+### Common Issues
+
+**Port Already in Use:**
+```bash
+# Windows
+netstat -ano | findstr :5000
+taskkill /PID [PID_NUMBER] /F
+
+# Linux
+sudo lsof -t -i:5000 | xargs kill -9
 ```
+
+**Database Connection Failed:**
+```bash
+# Check if MariaDB is running
+sudo systemctl status mariadb
+
+# Test connection
+telnet 192.168.0.150 3306
+```
+
+---
+
+**Last Updated:** December 23, 2024  
+**Version:** 1.0.0  
+**Status:** Active Development
+
+---
+
+<div align="center">
+
+**⭐ Star this repo if you found it helpful!**
+
+Made with ❤️ by [Saleem Ali](https://github.com/ali4210)
+
+</div>
